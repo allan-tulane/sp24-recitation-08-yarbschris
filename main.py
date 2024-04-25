@@ -12,8 +12,30 @@ def shortest_shortest_path(graph, source):
       a dict where each key is a vertex and the value is a tuple of
       (shortest path weight, shortest path number of edges). See test case for example.
     """
-    ### TODO
-    pass
+    distances = {vertex: float('inf') for vertex in graph}
+    edgeCount = {vertex: float('inf') for vertex in graph}
+    parents = {vertex: None for vertex in graph}
+    
+    distances[source] = 0
+    edgeCount[source] = 0
+    
+    queue = deque([source])
+    
+    while queue:
+        current = queue.popleft()
+        for neigh, weight in graph[current]:
+            newDistance = distances[current] + weight
+            if newDistance < distances[neigh] or (newDistance == distances[neigh] and edgeCount[current] + 1 < edgeCount[neigh]):
+                distances[neigh] = newDistance
+                edgeCount[neigh] = edgeCount[current] + 1
+                parents[neigh] = current
+                queue.append(neigh)
+    
+    shortest_paths = {vertex: (distances[vertex], edgeCount[vertex]) for vertex in graph}
+    return shortest_paths
+
+
+        
     
 
     
@@ -25,7 +47,17 @@ def bfs_path(graph, source):
       that vertex in the shortest path tree.
     """
     ###TODO
-    pass
+    queue = deque([source])
+    parents = {source: None}
+
+    while queue:
+        current = queue.popleft()
+        for neigh in graph[current]:
+            if neigh not in parents:
+                parents[neigh] = current
+                queue.append(neigh)
+    
+    return parents
 
 def get_sample_graph():
      return {'s': {'a', 'b'},
@@ -44,5 +76,12 @@ def get_path(parents, destination):
       (excluding the destination node itself). See test_get_path for an example.
     """
     ###TODO
-    pass
+    path = []
+    
+    while parents[destination] is not None:
+        path.append(parents[destination])
+        destination = parents[destination]
 
+    return ''.join(path[::-1])
+
+print(get_sample_graph())
